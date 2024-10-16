@@ -1,3 +1,6 @@
+# Add our "data" folder where all our fetched data will get saved
+data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
