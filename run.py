@@ -1,60 +1,31 @@
-import os
-from datetime import date
-
 import pandas as pd
-import requests
 import yfinance as yf
-from dateutil.relativedelta import relativedelta
 
-from fetch_data.fetch_financial_reports import (
-    FINANCIAL_STATEMENTS,
-    fetch_financial_reports_to_csv_files,
-)
-from fetch_data.fetch_historical_stock_prices import fetch_historical_data_to_csv_files
+from fetch_data.fetch_stock_data import FetchDataForStock
 from utils.create_file_directories import CreateFileDirs
 from utils.get_api_keys import FMP_API_KEY
 
 create_file_directories = CreateFileDirs()
-
-
-# Get last 20 years of data
-CURRENT_DATE = date.today()
-START_DATE = date.today() - relativedelta(years=20)
+fetch_stock_data = FetchDataForStock()
 
 
 STOCK_TICKER = "ASML"
 
 
 # stock = yf.Ticker(STOCK_TICKER)
-# financial = stock.financials
-# print(financial)
+# print(stock)
 
-# actions = stock.get_actions()
-# balance = stock.get_balance_sheet()
-# calendar = stock.get_calendar()
-# cf = stock.get_cashflow()
-# info = stock.get_info()
-# inst_holders = stock.get_institutional_holders()
-# news = stock.get_news()
-# recommendations = stock.get_recommendations()
+# calendar = stock.get_calendar()  # --> Dividend dates, earnings date, EPS and Revenue estimates
+# info = stock.get_info()  # --> Useful info and different ratios
+# inst_holders = stock.get_institutional_holders() # --> See institutional holders/percentages/value
+# recommendations = stock.get_recommendations() # --> Get recommendations from analysts
 
 # # PRINT THE RESULTS
 # print(actions)
-# print("*" * 20)
-# print(balance)
-# print("*" * 20)
 # print(calendar)
-# print("*" * 20)
-# print(cf)
-# print("*" * 20)
 # print(info)
-# print("*" * 20)
 # print(inst_holders)
-# print("*" * 20)
-# print(news)
-# print("*" * 20)
 # print(recommendations)
-# print("*" * 20)
 
 # print(company)
 
@@ -69,10 +40,13 @@ if __name__ == "__main__":
 
     create_file_directories.create_file_folders_if_not_exist()
 
-    for financial_statement in FINANCIAL_STATEMENTS:
+    for financial_statement in fetch_stock_data.FINANCIAL_STATEMENTS_TO_FETCH:
 
-        fetch_financial_reports_to_csv_files(
+        fetch_stock_data.fetch_financial_reports_to_csv_files(
             stock_ticker=STOCK_TICKER, financial_statement=financial_statement
         )
 
-        fetch_historical_data_to_csv_files(stock_ticker=STOCK_TICKER)
+    fetch_stock_data.fetch_historical_data_to_csv_file(stock_ticker=STOCK_TICKER)
+    fetch_stock_data.fetch_dividend_and_stock_split_data_to_csv_file(
+        stock_ticker=STOCK_TICKER
+    )
