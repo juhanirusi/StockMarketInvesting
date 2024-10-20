@@ -9,6 +9,10 @@ from dateutil.relativedelta import relativedelta
 from utils.create_file_directories import (
     FINANCIAL_REPORTS_DIR,
     HISTORICAL_STOCK_PRICES_DIR,
+    STOCK_ANALYST_RECOMMENDATIONS_DIR,
+    STOCK_ESTIMATES_DIR,
+    STOCK_INSTITUTIONAL_HOLDERS_DIR,
+    STOCK_RATIOS_AND_MARGINS_DIR,
     STOCK_SPLITS_AND_DIVIDENDS_DIR,
 )
 from utils.get_api_keys import FMP_API_KEY
@@ -54,6 +58,14 @@ class FetchDataForStock:
             f"{FILE_PATH}/{financial_statement}.csv", index=False
         )
 
+    def _fetch_stock_and_company_data(self, stock_ticker: str):
+        self.fetch_historical_data_to_csv_file(stock_ticker)
+        self.fetch_dividend_and_stock_split_data_to_csv_file(stock_ticker)
+        self.fetch_future_estimates_data_to_csv_file(stock_ticker)
+        self.fetch_institutional_holders_data_to_csv_file(stock_ticker)
+        self.fetch_stock_ratios_and_margins_data_to_csv_file(stock_ticker)
+        self.fetch_analyst_recommendations_data_to_csv_file(stock_ticker)
+
     def fetch_historical_data_to_csv_file(self, stock_ticker: str):
 
         try:
@@ -87,7 +99,7 @@ class FetchDataForStock:
             stock_dividend_and_stock_split_data.reset_index(inplace=True)
         except Exception as exception:
             print(
-                f"Fetching {stock_ticker}'s historical data ended up in a exception - {exception}"
+                f"Fetching {stock_ticker}'s dividend and stock split data ended up in a exception - {exception}"
             )
 
         FILE_PATH = f"{STOCK_SPLITS_AND_DIVIDENDS_DIR}/{stock_ticker}"
@@ -95,4 +107,76 @@ class FetchDataForStock:
 
         stock_dividend_and_stock_split_data.to_csv(
             f"{FILE_PATH}/stock-split-and-dividends.csv", index=False
+        )
+
+    def fetch_future_estimates_data_to_csv_file(self, stock_ticker: str):
+
+        try:
+            stock_future_estimates_data = pd.DataFrame(
+                yf.Ticker(stock_ticker).get_calendar()
+            )
+        except Exception as exception:
+            print(
+                f"Fetching {stock_ticker}'s future estimates data ended up in a exception - {exception}"
+            )
+
+        FILE_PATH = f"{STOCK_ESTIMATES_DIR}/{stock_ticker}"
+        Path(FILE_PATH).mkdir(parents=True, exist_ok=True)
+
+        stock_future_estimates_data.to_csv(
+            f"{FILE_PATH}/stock-future-estimates.csv", index=False
+        )
+
+    def fetch_institutional_holders_data_to_csv_file(self, stock_ticker: str):
+
+        try:
+            stock_future_estimates_data = pd.DataFrame(
+                yf.Ticker(stock_ticker).get_institutional_holders()
+            )
+        except Exception as exception:
+            print(
+                f"Fetching {stock_ticker}'s institutional holders data ended up in a exception - {exception}"
+            )
+
+        FILE_PATH = f"{STOCK_INSTITUTIONAL_HOLDERS_DIR}/{stock_ticker}"
+        Path(FILE_PATH).mkdir(parents=True, exist_ok=True)
+
+        stock_future_estimates_data.to_csv(
+            f"{FILE_PATH}/stock-institutional-holders.csv", index=False
+        )
+
+    def fetch_stock_ratios_and_margins_data_to_csv_file(self, stock_ticker: str):
+
+        try:
+            stock_ratios_and_margins_data = pd.DataFrame(
+                yf.Ticker(stock_ticker).get_info()
+            )
+        except Exception as exception:
+            print(
+                f"Fetching {stock_ticker}'s ratios and margins data ended up in a exception - {exception}"
+            )
+
+        FILE_PATH = f"{STOCK_RATIOS_AND_MARGINS_DIR}/{stock_ticker}"
+        Path(FILE_PATH).mkdir(parents=True, exist_ok=True)
+
+        stock_ratios_and_margins_data.to_csv(
+            f"{FILE_PATH}/stock-ratios-and-margins.csv", index=False
+        )
+
+    def fetch_analyst_recommendations_data_to_csv_file(self, stock_ticker: str):
+
+        try:
+            stock_ratios_and_margins_data = pd.DataFrame(
+                yf.Ticker(stock_ticker).get_recommendations()
+            )
+        except Exception as exception:
+            print(
+                f"Fetching {stock_ticker}'s analyst recommendations data ended up in a exception - {exception}"
+            )
+
+        FILE_PATH = f"{STOCK_ANALYST_RECOMMENDATIONS_DIR}/{stock_ticker}"
+        Path(FILE_PATH).mkdir(parents=True, exist_ok=True)
+
+        stock_ratios_and_margins_data.to_csv(
+            f"{FILE_PATH}/stock-analyst-recommendations.csv", index=False
         )
