@@ -15,7 +15,7 @@ STOCK_MANIPULATED_DATA_DIR = "None"
 
 class CreateFileDirs:
 
-    def create_stock_raw_data_folder(self, stock_ticker: str):
+    def create_stock_raw_data_folder(self, stock_ticker: str) -> str:
 
         STOCK_RAW_DATA_DIR = f"{RAW_DATA_DIR}/{stock_ticker}"
 
@@ -23,7 +23,7 @@ class CreateFileDirs:
 
         return STOCK_RAW_DATA_DIR
 
-    def create_stock_manipulated_data_folder(self, stock_ticker: str):
+    def create_stock_manipulated_data_folder(self, stock_ticker: str) -> str:
 
         STOCK_MANIPULATED_DATA_DIR = f"{MANIPULATED_DATA_DIR}/{stock_ticker}"
 
